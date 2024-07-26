@@ -4,7 +4,7 @@ require_once "../config/database.php";
 class AutorLivro
 {
     private $conn;
-    private $table_name = "autores_livros";
+    private $table_name = "autor_livro";
 
     public $id;
     public $autor_id;
@@ -45,14 +45,19 @@ class AutorLivro
 
     function listarLivrosDoAutor()
     {
-        $query = "SELECT a.* FROM livros a INNER JOIN " . $this->table_name . " at ON a.id = at.livro_id WHERE at.autor_id = :autor_id";
+        try {
+            $query = "SELECT a.* FROM livros a INNER JOIN " . $this->table_name . " at ON a.id = at.livro_id WHERE at.autor_id = :autor_id";
 
-        $statement = $this->conn->prepare($query);
+            $statement = $this->conn->prepare($query);
 
-        $statement->bindParam(":turma_id", $this->autor_id);
+            $statement->bindValue(":autor_id", $this->autor_id, PDO::PARAM_INT);
 
-        $statement->execute();
+            $statement->execute();
 
-        return $statement;
+            return $statement;
+        } catch (PDOException $e) {
+            echo "Erro ao listar livros do autor: " . $e->getMessage();
+            return null;
+        }
     }
 }

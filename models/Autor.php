@@ -9,7 +9,7 @@ class Autor
     public $id;
     public $nome;
     public $timestamp_criacao;
-    public $timestamp_atualizacao;
+    public $timestamp_update;
 
     public function __construct($db)
     {
@@ -46,12 +46,10 @@ class Autor
         
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        echo $row->nome;
-
         if ($row) {
             $this->nome = $row['nome'];
             $this->timestamp_criacao = $row['timestamp_criacao'];
-            $this->timestamp_atualizacao = $row['timestamp_atualizacao'];
+            $this->timestamp_update = $row['timestamp_update'];
             return true;
         }
 

@@ -20,19 +20,21 @@ class LivroController
     public function index()
     {
         $statement = $this->livro->index();
-        $livro = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return ['view' => "../views/livro/index.php", 'data' => compact('livro')];
+        $livros = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return ['view' => "../views/livro/index.php", 'data' => compact('livros')];
     }
 
     public function create()
     {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->livro->titulo = $_POST['titulo'];
 
             if ($this->livro->create()) {
                 header("Location: index.php?action=list-livros");
+                exit;
             }
         }
+
         return ['view' => '../views/livro/create.php', 'data' => []];
     }
 
@@ -40,40 +42,47 @@ class LivroController
     {
         $this->livro->id = $id;
         $this->livro->read();
-        $this->autorLivro->listarLivrosDoAutor();
+        $this->autorLivro->livro_id = $id;
         $statement = $this->autorLivro->listarLivrosDoAutor();
-        $livros_registrados = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $autores = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        $livroModel = new Livro($this->db);
-        $livros_disponiveis = $livroModel->livrosNaoCadastrados($id)->fetchAll(PDO::FETCH_ASSOC);
-
-        return ['view' => '../views/livro/read.php', 'data' => [
-            'livro' => $this->livro,
-            'livros_registrados' => $livros_registrados,
-            'livros_disponiveis' => $livros_disponiveis,
-        ]];
+        return ['view' => '../views/livro/read.php', 'data' => ['livro' => $this->livro, 'autores' => $autores]];
     }
 
     public function update($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->livro->id = $id;
-            $this->livro->titulo = $_POST["titulo"];
+            $this->livro->titulo = $_POST['titulo'];
 
             if ($this->livro->update()) {
                 header("Location: index.php?action=list-livros");
+                exit;
             }
         } else {
             $this->livro->id = $id;
             $this->livro->read();
         }
+
         return ['view' => '../views/livro/update.php', 'data' => ['livro' => $this->livro]];
     }
 
     public function delete($id)
     {
         $this->livro->id = $id;
-        $this->livro->delete();
-        header("Location: index.php?action=list-livroes");
+        if ($this->livro->delete()) {
+            header("Location: index.php?action=list-livros");
+            exit;
+        }
+    }
+
+    public function removerRegistro($livro_id, $autor_id)
+    {
+        $this->autorLivro->livro_id = $livro_id;
+        $this->autorLivro->autor_id = $autor_id;
+        if ($this->autorLivro->cancelarRegistro()) {
+            header("Location: index.php?action=read-livro&id=" . $livro_id);
+            exit;
+        }
     }
 }

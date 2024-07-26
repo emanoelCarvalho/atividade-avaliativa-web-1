@@ -9,7 +9,7 @@ class Livro
     public $id;
     public $titulo;
     public $timestamp_criacao;
-    public $timestamp_atualizacao;
+    public $timestamp_update;
     public function __construct($db)
     {
         $this->conn = $db;
@@ -48,7 +48,7 @@ class Livro
         if ($row) {
             $this->titulo = $row['titulo'];
             $this->timestamp_criacao = $row['timestamp_criacao'];
-            $this->timestamp_atualizacao = $row['timestamp_atualizacao'];
+            $this->timestamp_update = $row['timestamp_update'];
             return true;
         }
 
@@ -74,7 +74,7 @@ class Livro
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         $this->id = htmlspecialchars(strip_tags($this->id));
-        $stmt->bindParam(":id", $this->id);
+        $stmt->bindParam(1, $this->id);
         if ($stmt->execute()) {
             return true;
         }
@@ -83,7 +83,7 @@ class Livro
 
     public function livrosNaoCadastrados($autor_id)
     {
-        $query = "SELECT * FROM livros WHERE id NOT IN (SELECT livro_id FROM autores_livros WHERE autor_id = ?)";
+        $query = "SELECT * FROM livros WHERE id NOT IN (SELECT livro_id FROM autor_livro WHERE autor_id = ?)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $autor_id);
         $stmt->execute();
