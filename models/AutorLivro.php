@@ -17,7 +17,7 @@ class AutorLivro
 
     function registrarLivro()
     {
-        $query = "INSERT INTO " . $this->table_name . "SET autor_id=:autor_id, livro_id=:livro_id";
+        $query = "INSERT INTO " . $this->table_name . " (autor_id, livro_id) VALUES (:autor_id, :livro_id)";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":autor_id", $this->autor_id);
@@ -28,6 +28,7 @@ class AutorLivro
         }
         return false;
     }
+
 
     function cancelarRegistro()
     {

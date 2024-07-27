@@ -47,7 +47,12 @@ switch ($action) {
     case 'cancelar-registro':
         $autorController->removerRegistro($autor_id, $livro_id);
         break;
+    case 'associar_v1':
+        $result = $autorController->associarV1();
+        break;
     case 'associar_v2':
+        $result = $autorController->associarV2();
+        break;
         
     default:
         $result['view'] = '../views/home.php';

@@ -46,7 +46,15 @@ class AutorController
         $statement = $this->autorLivro->listarLivrosDoAutor();
         $livros = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        return ["view" => "../views/autor/read.php", "data" => ['autor' => $this->autor, 'livros' => $livros]];
+        // $livroModel = new Livro($this->db);
+
+        // $livros_disponiveis = $livroModel->livrosNaoCadastrados($id)->fecthAll(PDO::FETCH_ASSOC);
+
+        return ["view" => "../views/autor/read.php", "data" => [
+            'autor' => $this->autor,
+            'livros' => $livros,
+            // 'livros_disponiveis' => $livros_disponiveis
+        ]];
     }
 
     public function update($id)
@@ -76,12 +84,67 @@ class AutorController
         }
     }
 
+    public function associarV1()
+    {
+        $errors = [];
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            $this->autorLivro->autor_id = $_POST['autor_id'];
+            $this->autorLivro->livro_id = $_POST['livro_id'];
+
+            $autorModel = new Autor($this->db);
+            $livrModel = new Livro($this->db);
+
+            $autorModel->id = $this->autorLivro->autor_id;
+            $livrModel->id = $this->autorLivro->livro_id;
+
+            if (!$autorModel->read()) {
+                $errors[] = 'ID do autor inválido';
+            }
+
+            if (!$livrModel->read()) {
+                $errors[] = 'ID do livro inválido';
+            }
+
+            if (empty($errors)) {
+                if ($this->autorLivro->registrarLivro()) {
+                    header("Location: index.php?action=read-autor&id=" . $_POST['autor_id']);
+                    exit;
+                } else {
+                    $errors[] = 'Erro ao associar autor ao livro';
+                }
+            }
+        }
+        return ["view" => "../views/autor/associarV1.php", "data" => ['errors' => $errors]];
+    }
+
+    public function associarV2()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            $this->autorLivro->autor_id = $_POST['autor_id'];
+            $this->autorLivro->livro_id = $_POST['livro_id'];
+
+            if ($this->autorLivro->registrarLivro()) {
+                header("Location: index.php?action=read-autor&id=" . $_POST['autor_id']);
+                exit;
+            }
+        } else {
+            $autores = $this->autor->index()->fetchAll(PDO::FETCH_ASSOC);
+            $livros = (new Livro($this->db))->index()->fetchAll(PDO::FETCH_ASSOC);
+
+            return ["view" => "../views/autor/associarV2.php", "data" => ['autores' => $autores, 'livros' => $livros]];
+        }
+    }
+
+
     public function removerRegistro($autor_id, $livro_id)
     {
         $this->autorLivro->autor_id = $autor_id;
         $this->autorLivro->livro_id = $livro_id;
         if ($this->autorLivro->cancelarRegistro()) {
-            header("Location: index.php?action=read-turma&id=" . $livro_id);
+            header("Location: index.php?action=read-autor&id=" . $livro_id);
             exit;
         }
     }

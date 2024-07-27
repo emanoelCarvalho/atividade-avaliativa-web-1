@@ -81,4 +81,14 @@ class Autor
         }
         return false;
     }
+
+    function livrosNaoAssociados() 
+    {
+        $query = "SELECT * FROM livros WHERE id NOT IN (SELECT livro_id FROM autores_livros WHERE autor_id = ?)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->id);
+        $stmt->execute();
+        return $stmt;
+    }
+
 }
