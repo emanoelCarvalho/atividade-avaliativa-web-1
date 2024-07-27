@@ -46,14 +46,14 @@ class AutorController
         $statement = $this->autorLivro->listarLivrosDoAutor();
         $livros = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        // $livroModel = new Livro($this->db);
+        $livroModel = new Livro($this->db);
 
-        // $livros_disponiveis = $livroModel->livrosNaoCadastrados($id)->fecthAll(PDO::FETCH_ASSOC);
+        $livros_disponiveis = $livroModel->livrosNaoCadastrados($id)->fetchAll(PDO::FETCH_ASSOC);
 
         return ["view" => "../views/autor/read.php", "data" => [
             'autor' => $this->autor,
             'livros' => $livros,
-            // 'livros_disponiveis' => $livros_disponiveis
+            'livros_disponiveis' => $livros_disponiveis
         ]];
     }
 
