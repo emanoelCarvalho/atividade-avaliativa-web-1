@@ -8,6 +8,7 @@ class Livro
 
     public $id;
     public $titulo;
+    public $genero;
     public $timestamp_criacao;
     public $timestamp_update;
     public function __construct($db)
@@ -17,10 +18,12 @@ class Livro
 
     function create()
     {
-        $query = "INSERT INTO " . $this->table_name . " SET titulo=:titulo";
+        $query = "INSERT INTO " . $this->table_name . " SET titulo=:titulo, genero=:genero";
         $stmt = $this->conn->prepare($query);
         $this->titulo = htmlspecialchars(strip_tags($this->titulo));
+        $this->genero = htmlspecialchars(strip_tags($this->genero));
         $stmt->bindParam(":titulo", $this->titulo);
+        $stmt->bindParam(":genero", $this->genero);
         if ($stmt->execute()) {
             return true;
         }
@@ -47,6 +50,7 @@ class Livro
 
         if ($row) {
             $this->titulo = $row['titulo'];
+            $this->genero = $row['genero'];
             $this->timestamp_criacao = $row['timestamp_criacao'];
             $this->timestamp_update = $row['timestamp_update'];
             return true;
@@ -57,11 +61,12 @@ class Livro
 
     function update()
     {
-        $query = "UPDATE " . $this->table_name . " SET titulo = :titulo WHERE id = :id";
+        $query = "UPDATE " . $this->table_name . " SET titulo = :titulo, genero = :genero WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $this->titulo = htmlspecialchars(strip_tags($this->titulo));
         $this->id = htmlspecialchars(strip_tags($this->id));
         $stmt->bindParam(":titulo", $this->titulo);
+        $stmt->bindParam(":genero", $this->genero);
         $stmt->bindParam(":id", $this->id);
         if ($stmt->execute()) {
             return true;

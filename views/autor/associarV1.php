@@ -1,4 +1,4 @@
-<h1 class="my-4">Registrar Livro á autor</h1>
+<h1 class="my-4">Associar Livro a autor</h1>
 <div class="card">
     <div class="card-body">
         <form action="index.php?action=associar_v1" method="POST">

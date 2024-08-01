@@ -28,6 +28,7 @@ class AutorController
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->autor->nome = $_POST['nome'];
+            $this->autor->editora = $_POST['editora'];
 
             if ($this->autor->create()) {
                 header("Location: index.php?action=list-autores");
@@ -62,6 +63,7 @@ class AutorController
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->autor->id = $id;
             $this->autor->nome = $_POST['nome'];
+            $this->autor->editora = $_POST['editora'];
 
             if ($this->autor->update()) {
                 header("Location: index.php?action=list-autores");

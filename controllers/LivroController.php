@@ -28,6 +28,7 @@ class LivroController
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->livro->titulo = $_POST['titulo'];
+            $this->livro->genero = $_POST['genero'];
 
             if ($this->livro->create()) {
                 header("Location: index.php?action=list-livros");
@@ -54,6 +55,7 @@ class LivroController
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->livro->id = $id;
             $this->livro->titulo = $_POST['titulo'];
+            $this->livro->genero = $_POST['genero'];
 
             if ($this->livro->update()) {
                 header("Location: index.php?action=list-livros");
